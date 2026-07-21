@@ -4,16 +4,15 @@
 Carrd / Linktree — served at **nexus.altrf.dev**. One page, a curated set of links,
 no backend.
 
+Stack and conventions follow the sibling project `digital-garden-2024`
+(`D:\code\digital-garden-2024`) — refer to it for patterns not covered here.
+
 ## Stack
 
 - **Astro 7** — static output (no SSR adapter)
 - **TypeScript** — strict (`astro/tsconfigs/strict`)
-- **Tailwind CSS** — the intended styling approach _(not yet installed — see note below)_
+- **Tailwind CSS v4** — Vite plugin (`@tailwindcss/vite`), CSS-first (no `tailwind.config.*`)
 - **Bun** — package manager (preferred over npm)
-
-> Right now the repo is the default Astro `basics` scaffold. Tailwind is **not wired
-> up yet**; when adding it, use **Tailwind v4** (CSS-first, no `tailwind.config.*`) to
-> stay consistent with the sibling `altr-matcha` project.
 
 ## Commands
 
@@ -31,27 +30,57 @@ The dev server can run in background mode: `bunx astro dev --background`, manage
 
 ## Conventions
 
-- **Package manager:** prefer `bun` over `npm`.
-- **Styling:** Tailwind utility classes (once installed); avoid custom CSS where
-  Tailwind can cover it.
-- **Components:** `PascalCase.astro` (e.g. `Welcome.astro`).
-- **Pages:** `kebab-case.astro` under `src/pages/` (e.g. `index.astro`).
-- **Imports:** currently relative paths; a `@/` → `src/` alias is **not** configured yet.
+### Imports
+
+Always use the `@/` alias (maps to `src/`), configured in `tsconfig.json`:
+
+```ts
+import Layout from '@/layouts/Layout.astro'   // ✅
+import Layout from '../layouts/Layout.astro'  // ❌ avoid relative paths
+```
+
+### Styling & design tokens
+
+- **Tailwind v4:** use `@import 'tailwindcss'` in `src/styles/globals.css` — no
+  `@tailwind` directives, no `tailwind.config.*`.
+- **Design tokens:** colors are **oklch** CSS variables defined in
+  `src/styles/presets/nexus.css` (a dark theme — purple `--primary`, orange
+  `--accent`). They are exposed to Tailwind utilities (`bg-background`,
+  `text-foreground`, `bg-primary`, …) via the `@theme inline` block in `globals.css`.
+- **Never hardcode colors** — use the token utilities / CSS variables. To retheme,
+  edit `presets/nexus.css`.
+
+### Fonts
+
+- **Font loading:** Astro Font API (`astro.config.mjs` → `fonts[]` with
+  `fontProviders.google()`) + the `FontLoader.astro` component injected in
+  `Layout.astro` `<head>`. CSS variables follow the `--font-<kebab-name>` convention
+  (e.g. `--font-lato`), mapped to `--font-sans` / `--font-mono` in `globals.css`
+  `@theme`.
+- **Do not** add Google Fonts `@import` to CSS. To add a font: add an entry to
+  `fonts[]` in `astro.config.mjs`, then a `<Font cssVariable="…" />` line in
+  `FontLoader.astro`.
+- Current fonts: **Lato** (sans / body) · **Inconsolata** (mono).
 
 ## Architecture
 
 ```
 src/
   pages/
-    index.astro       # the single link-in-bio page
+    index.astro          # the single link-in-bio page
   layouts/
-    Layout.astro      # root HTML shell (<html>, <head>, global meta)
+    Layout.astro         # root HTML shell (<html>, <head>, meta, FontLoader)
   components/
-    Welcome.astro     # default scaffold component (to be replaced)
-  assets/             # images / SVGs imported by components
-public/                # static assets served at / (favicons, etc.)
+    FontLoader.astro     # <Font> tags for the Astro Font API
+    Welcome.astro        # default scaffold component (to be replaced)
+  styles/
+    globals.css          # @import 'tailwindcss' + @theme token mapping + base layer
+    presets/
+      nexus.css          # oklch design tokens (dark theme)
+  assets/                # images / SVGs imported by components
+public/                  # static assets served at / (favicons, etc.)
 ```
 
-- `src/pages/index.astro` composes `<Layout>` and the page content.
-- `src/layouts/Layout.astro` provides the HTML shell and global `<head>` meta.
-- Imported/optimized assets live in `src/assets/`; files served as-is live in `public/`.
+- `src/styles/globals.css` is imported once in `Layout.astro`; it wires the design
+  tokens into Tailwind and sets base `body` styles.
+- Fonts are configured in `astro.config.mjs` and emitted by `FontLoader.astro`.
