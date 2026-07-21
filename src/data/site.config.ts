@@ -1,21 +1,20 @@
-// Site-wide profile + social links (not an Astro collection — imported directly).
-// Profile seeded from the digital-garden-2024 portfolio; fill in real social URLs.
+// Site-wide profile (not an Astro collection — imported directly).
+// Profile seeded from the digital-garden-2024 portfolio.
 export const site = {
   name: 'ALTR',
   nickname: 'Chuan',
+  firstName: 'Phattharanat',
   fullName: 'Phattharanat Khunakornophat',
-  tagline: 'I take an avid interest in data science and data visualisation.',
+  tagline: "An ordinary Data Scientist who loves SAWANO Hiroyuki's music",
   intros: [
     '💻 Data Scientist | Developer',
-    '📊 Data visualisation enthusiast',
+    '📊 I take an avid interest in data visualisation',
     '🌱 Digital Gardener',
+    '🏓 Table Tennis',
+    '🎹 Sawano Hiroyuki music enjoyer',
   ],
   avatar: '/lucy.jpg', // in public/
+  github: 'https://github.com/chuan-khuna',
+  timezone: 'Asia/Bangkok', // owner's timezone (for the "My time" card)
   url: 'https://nexus.altrf.dev',
-  socials: [
-    { label: 'GitHub', url: 'https://github.com/chuan-khuna', icon: 'simple-icons:github' },
-    { label: 'X', url: 'https://x.com/', icon: 'simple-icons:x' }, // TODO: add handle
-    { label: 'LinkedIn', url: 'https://linkedin.com/in/', icon: 'simple-icons:linkedin' }, // TODO
-    { label: 'Email', url: 'mailto:you@example.com', icon: 'lucide:mail' }, // TODO
-  ],
 } as const;

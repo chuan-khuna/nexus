@@ -1,0 +1,35 @@
+---
+import { Icon } from 'astro-icon/components';
+
+interface Props {
+	label: string;
+	url: string;
+	icon?: string;
+	hasDescription?: boolean;
+}
+
+const { label, url, icon, hasDescription = false } = Astro.props;
+---
+
+<a
+	href={url}
+	target="_blank"
+	rel="noopener noreferrer"
+	class="group flex flex-col rounded-xl border border-border bg-card p-5 transition-colors hover:border-primary"
+>
+	<div class="flex items-center gap-2">
+		{icon ? <Icon name={icon} class="size-5 shrink-0 text-primary" /> : null}
+		<h2 class="font-semibold">{label}</h2>
+		<Icon
+			name="lucide:arrow-up-right"
+			class="ml-auto size-4 shrink-0 text-foreground/40 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+		/>
+	</div>
+	{
+		hasDescription && (
+			<div class="mt-2 text-sm text-foreground/70 [&_p]:m-0">
+				<slot />
+			</div>
+		)
+	}
+</a>
