@@ -1,0 +1,13 @@
+{
+  // Cloudflare Workers Static Assets — serves the static `dist/` output.
+  // https://developers.cloudflare.com/workers/static-assets/routing/static-site-generation/
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "nexus",
+  "compatibility_date": "2026-07-21",
+  "assets": {
+    "directory": "./dist/"
+  },
+  "observability": {
+    "enabled": true
+  }
+}

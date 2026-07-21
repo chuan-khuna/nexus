@@ -126,3 +126,21 @@ Optional MDX body — renders as a short description inside the card.
 - **Profile** is *not* a collection — edit `src/data/site.config.ts`
   (name, `firstName`, tagline, intros, avatar, `github`, `timezone`). The `timezone`
   drives the "My time" clock in the header card.
+
+## Deployment
+
+Static site → **Cloudflare** (Workers Static Assets). Config is `wrangler.jsonc`
+(`assets.directory: "./dist/"`). Two ways to ship:
+
+- **Git-connected (recommended):** connect the repo in the Cloudflare dashboard —
+  build command `bun run build`, output directory `dist/`. The Node version comes
+  from `.nvmrc` (24.15.0).
+- **Manual:** `bun run deploy` (runs `astro build` then `wrangler deploy`; needs a
+  one-time `wrangler login`). The custom domain (`nexus.altrf.dev`) is attached in
+  the dashboard.
+
+**Stay static — do not add the `@astrojs/cloudflare` adapter.** On a fully static
+site the adapter's unconditional "Rearranging server assets" step breaks build-time
+image optimization (ENOENT) — confirmed by the `altr-matcha` and `meditations`
+references, both of which ship static with no adapter. Add it only when a genuine
+on-demand (SSR) route is introduced.
