@@ -1,11 +1,46 @@
 ---
-import Welcome from '@/components/Welcome.astro';
+import { getCollection, render } from 'astro:content';
 import Layout from '@/layouts/Layout.astro';
+import Profile from '@/components/Profile.astro';
+import LinkButton from '@/components/LinkButton.astro';
+import SocialLinks from '@/components/SocialLinks.astro';
+import { site } from '@/data/site.config';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const links = (await getCollection('links')).sort((a, b) => a.data.order - b.data.order);
+const rendered = await Promise.all(
+	links.map(async (entry) => {
+		const { Content } = await render(entry);
+		const hasDescription = Boolean(entry.body && entry.body.trim().length > 0);
+		return { entry, Content, hasDescription };
+	}),
+);
+
+const year = new Date().getFullYear();
 ---
 
 <Layout>
-	<Welcome />
+	<main class="mx-auto flex min-h-screen w-full max-w-md flex-col items-center gap-8 px-6 py-16">
+		<Profile />
+
+		<div class="flex w-full flex-col gap-3">
+			{
+				rendered.map(({ entry, Content, hasDescription }) => (
+					<LinkButton
+						label={entry.data.label}
+						url={entry.data.url}
+						icon={entry.data.icon}
+						hasDescription={hasDescription}
+					>
+						<Content />
+					</LinkButton>
+				))
+			}
+		</div>
+
+		<SocialLinks />
+
+		<footer class="mt-auto pt-8 text-xs text-foreground/40">
+			&copy; {year} {site.name} &middot; nexus.altrf.dev
+		</footer>
+	</main>
 </Layout>

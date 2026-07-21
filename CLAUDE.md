@@ -12,6 +12,8 @@ Stack and conventions follow the sibling project `digital-garden-2024`
 - **Astro 7** — static output (no SSR adapter)
 - **TypeScript** — strict (`astro/tsconfigs/strict`)
 - **Tailwind CSS v4** — Vite plugin (`@tailwindcss/vite`), CSS-first (no `tailwind.config.*`)
+- **MDX** — `@astrojs/mdx` (content-collection entries are authored as `.mdx`)
+- **Icons** — `astro-icon` + Iconify (`@iconify-json/simple-icons`, `@iconify-json/lucide`)
 - **Bun** — package manager (preferred over npm)
 
 ## Commands
@@ -67,20 +69,56 @@ import Layout from '../layouts/Layout.astro'  // ❌ avoid relative paths
 ```
 src/
   pages/
-    index.astro          # the single link-in-bio page
+    index.astro          # the link-in-bio page — composes the sections below
   layouts/
     Layout.astro         # root HTML shell (<html>, <head>, meta, FontLoader)
   components/
     FontLoader.astro     # <Font> tags for the Astro Font API
-    Welcome.astro        # default scaffold component (to be replaced)
+    Profile.astro        # avatar + name + tagline + intros
+    LinkButton.astro     # one link button (icon + label + optional MDX description)
+    SocialLinks.astro    # row of social icon links
+  content/
+    collection-definitions/
+      link.ts            # `links` collection — glob loader + zod schema
+    links/               # one .mdx per link (frontmatter: label, url, icon, order)
+  content.config.ts      # registers collections (imports the definitions)
+  data/
+    site.config.ts       # profile + social links (imported directly, not a collection)
   styles/
     globals.css          # @import 'tailwindcss' + @theme token mapping + base layer
     presets/
       nexus.css          # oklch design tokens (dark theme)
   assets/                # images / SVGs imported by components
-public/                  # static assets served at / (favicons, etc.)
+public/                  # static assets served at / (lucy.jpg avatar, favicons)
 ```
 
+- `index.astro` reads the `links` collection via `getCollection('links')`, sorts by
+  `order`, and renders each `LinkButton` (the MDX body becomes the description).
 - `src/styles/globals.css` is imported once in `Layout.astro`; it wires the design
   tokens into Tailwind and sets base `body` styles.
 - Fonts are configured in `astro.config.mjs` and emitted by `FontLoader.astro`.
+
+## Content
+
+Links are an Astro **content collection** — one `.mdx` file per link in
+`src/content/links/`:
+
+```mdx
+---
+label: Digital Garden
+url: https://altrf.dev
+icon: lucide:sprout   # Iconify id (simple-icons / lucide)
+order: 1              # ascending sort
+---
+
+Optional MDX body — renders as a short description under the button.
+```
+
+- **Add a link:** drop a new `.mdx` into `src/content/links/`. The schema lives in
+  `src/content/collection-definitions/link.ts`; collections are registered in
+  `src/content.config.ts`.
+- **Naming convention** (from `digital-garden-2024`): the definition file is
+  **singular** (`link.ts`); the exported variable and content folder are **plural**
+  (`linksCollection`, `links/`).
+- **Profile & socials** are *not* a collection — edit `src/data/site.config.ts`
+  (name, tagline, intros, avatar, `socials[]`). Icons are Iconify ids.
