@@ -21,7 +21,7 @@ const year = new Date().getFullYear();
 	<main class="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-6 px-4 py-12 sm:px-6 sm:py-16">
 		<Profile />
 
-		<div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+		<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 			{
 				rendered.map(({ entry, Content, hasDescription }) => (
 					<LinkCard
