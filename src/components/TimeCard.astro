@@ -10,13 +10,19 @@ interface Props {
 const { title, timezone, live = false } = Astro.props;
 ---
 
-<div data-timecard data-timezone={timezone ?? ''}>
+<div data-timecard data-timezone={timezone ?? ''} class="select-none">
 	<div class="flex items-center gap-1.5">
 		<span class="text-xs font-medium text-foreground/60">{title}</span>
-		{live && <span class="size-2 rounded-full bg-green-500" aria-label="live"></span>}
+		{
+			live && (
+				<span class="relative flex size-2" aria-label="live">
+					<span class="absolute inline-flex size-full animate-ping rounded-full bg-cyan-400 opacity-75" />
+					<span class="relative inline-flex size-2 rounded-full bg-cyan-400" />
+				</span>
+			)
+		}
 	</div>
-	<time class="mt-0.5 block font-mono text-2xl tabular-nums tracking-tight" data-clock>--:--:--</time>
-	<div class="mt-0.5 text-[11px] text-foreground/50">
-		<span data-date>&mdash;</span> &middot; <span data-tzlabel>{timezone ?? ''}</span>
-	</div>
+	<time class="mt-0.5 block font-mono text-2xl tabular-nums tracking-tight" data-clock>--:--</time>
+	<div class="mt-0.5 text-[11px] text-foreground/50" data-date>&mdash;</div>
+	<div class="text-[11px] text-foreground/50" data-tzlabel>{timezone ?? ''}</div>
 </div>

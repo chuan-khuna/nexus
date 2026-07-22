@@ -54,7 +54,6 @@ const year = new Date().getFullYear();
 		const timeOpts: Intl.DateTimeFormatOptions = {
 			hour: '2-digit',
 			minute: '2-digit',
-			second: '2-digit',
 			hour12: false,
 		};
 		if (tz) {
@@ -67,6 +66,14 @@ const year = new Date().getFullYear();
 		};
 	}
 
+	// "GMT+7", "GMT+05:30", … for the given IANA zone (visitor-local when omitted).
+	function offsetLabel(tz?: string) {
+		const opts: Intl.DateTimeFormatOptions = { timeZoneName: 'shortOffset' };
+		if (tz) opts.timeZone = tz;
+		const parts = new Intl.DateTimeFormat('en-US', opts).formatToParts(new Date());
+		return parts.find((p) => p.type === 'timeZoneName')?.value ?? '';
+	}
+
 	function tick() {
 		document.querySelectorAll('[data-timecard]').forEach((el) => {
 			const tz = el.getAttribute('data-timezone') || undefined;
@@ -76,7 +83,10 @@ const year = new Date().getFullYear();
 			const tzEl = el.querySelector('[data-tzlabel]');
 			if (dateEl) dateEl.textContent = date;
 			if (clockEl) clockEl.textContent = time;
-			if (tzEl && !tz) tzEl.textContent = Intl.DateTimeFormat().resolvedOptions().timeZone;
+			if (tzEl) {
+				const zone = tz ?? Intl.DateTimeFormat().resolvedOptions().timeZone;
+				tzEl.textContent = `${zone} (${offsetLabel(tz)})`;
+			}
 		});
 	}
 
