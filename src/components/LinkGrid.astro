@@ -1,0 +1,28 @@
+---
+import { getCollection, render } from 'astro:content';
+import LinkCard from '@/components/LinkCard.astro';
+
+const links = (await getCollection('links')).sort((a, b) => a.data.order - b.data.order);
+const rendered = await Promise.all(
+	links.map(async (entry) => {
+		const { Content } = await render(entry);
+		const hasDescription = Boolean(entry.body && entry.body.trim().length > 0);
+		return { entry, Content, hasDescription };
+	}),
+);
+---
+
+<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+	{
+		rendered.map(({ entry, Content, hasDescription }) => (
+			<LinkCard
+				label={entry.data.label}
+				url={entry.data.url}
+				icon={entry.data.icon}
+				hasDescription={hasDescription}
+			>
+				<Content />
+			</LinkCard>
+		))
+	}
+</div>

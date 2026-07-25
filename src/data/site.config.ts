@@ -15,6 +15,7 @@ export const site = {
   ],
   avatar: '/lucy.jpg', // in public/
   github: 'https://github.com/chuan-khuna',
+  linkedin: 'https://www.linkedin.com/in/phattharanat-khunakornophat-97568b179/',
   timezone: 'Asia/Bangkok', // owner's timezone (for the "My time" card)
   url: 'https://nexus.altrf.dev',
 } as const;

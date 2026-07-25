@@ -16,7 +16,7 @@ import { site } from '@/data/site.config';
 				{site.intros.map((intro) => <li>{intro}</li>)}
 			</ul>
 
-			<div class="mt-6">
+			<div class="mt-6 flex items-center gap-4">
 				<a
 					href={site.github}
 					target="_blank"
@@ -25,6 +25,15 @@ import { site } from '@/data/site.config';
 					class="inline-flex text-foreground/70 transition-colors hover:text-primary"
 				>
 					<Icon name="simple-icons:github" class="size-6" />
+				</a>
+				<a
+					href={site.linkedin}
+					target="_blank"
+					rel="noopener noreferrer"
+					aria-label="LinkedIn"
+					class="inline-flex text-foreground/70 transition-colors hover:text-primary"
+				>
+					<Icon name="simple-icons:linkedin" class="size-6" />
 				</a>
 			</div>
 		</div>

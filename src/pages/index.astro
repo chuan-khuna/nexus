@@ -1,18 +1,8 @@
 ---
-import { getCollection, render } from 'astro:content';
 import Layout from '@/layouts/Layout.astro';
 import Profile from '@/components/Profile.astro';
-import LinkCard from '@/components/LinkCard.astro';
+import LinkGrid from '@/components/LinkGrid.astro';
 import { site } from '@/data/site.config';
-
-const links = (await getCollection('links')).sort((a, b) => a.data.order - b.data.order);
-const rendered = await Promise.all(
-	links.map(async (entry) => {
-		const { Content } = await render(entry);
-		const hasDescription = Boolean(entry.body && entry.body.trim().length > 0);
-		return { entry, Content, hasDescription };
-	}),
-);
 
 const year = new Date().getFullYear();
 ---
@@ -21,20 +11,7 @@ const year = new Date().getFullYear();
 	<main class="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-6 px-4 py-12 sm:px-6 sm:py-16">
 		<Profile />
 
-		<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-			{
-				rendered.map(({ entry, Content, hasDescription }) => (
-					<LinkCard
-						label={entry.data.label}
-						url={entry.data.url}
-						icon={entry.data.icon}
-						hasDescription={hasDescription}
-					>
-						<Content />
-					</LinkCard>
-				))
-			}
-		</div>
+		<LinkGrid />
 
 		<footer class="pt-4 text-xs text-foreground/40">
 			&copy; {year} {site.name} &middot; nexus.altrf.dev
